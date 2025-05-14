@@ -6,32 +6,43 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Executors;
 
+/**
+ * Implements {@link OutputStrategy} to output patient data via TCP.
+ * Creates a TCP server that listens for peoples connections and streams  data.
+ */
 public class TcpOutputStrategy implements OutputStrategy {
 
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private PrintWriter out;
 
-    public TcpOutputStrategy(int port) {
-        try {
-            serverSocket = new ServerSocket(port);
-            System.out.println("TCP Server started on port " + port);
+    /**
+     * Creates TCP server on the specified port.
+     * @param port The port number to listen on
+     * @throws IOException If server creation fails
+     */
+    public TcpOutputStrategy(int port) throws IOException {
+        serverSocket = new ServerSocket(port);
+        System.out.println("TCP Server started on port " + port);
 
-            // Accept clients in a new thread to not block the main thread
-            Executors.newSingleThreadExecutor().submit(() -> {
-                try {
-                    clientSocket = serverSocket.accept();
-                    out = new PrintWriter(clientSocket.getOutputStream(), true);
-                    System.out.println("Client connected: " + clientSocket.getInetAddress());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Executors.newSingleThreadExecutor().submit(() -> {
+            try {
+                clientSocket = serverSocket.accept();
+                out = new PrintWriter(clientSocket.getOutputStream(), true);
+                System.out.println("Client connected: " + clientSocket.getInetAddress());
+            } catch (IOException e) {
+                System.err.println("Error accepting client connection: " + e.getMessage());
+            }
+        });
     }
 
+    /**
+     * Outputs patient data to the connected TCP client.
+     * @param patientId The patient id
+     * @param timestamp The time of data recording in milliseconds since epoch
+     * @param label The type of health data
+     * @param data The measurement value
+     */
     @Override
     public void output(int patientId, long timestamp, String label, String data) {
         if (out != null) {
