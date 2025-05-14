@@ -10,6 +10,7 @@ import com.data_management.Patient;
  * it against specific health criteria.
  */
 public class AlertGenerator {
+
     private DataStorage dataStorage;
 
     /**
@@ -27,10 +28,7 @@ public class AlertGenerator {
     /**
      * Evaluates the specified patient's data to determine if any alert conditions
      * are met. If a condition is met, an alert is triggered via the
-     * {@link #triggerAlert}
-     * method. This method should define the specific conditions under which an
-     * alert
-     * will be triggered.
+     * {@link #triggerAlert} method.
      *
      * @param patient the patient data to evaluate for alert conditions
      */
@@ -40,9 +38,7 @@ public class AlertGenerator {
 
     /**
      * Triggers an alert for the monitoring system. This method can be extended to
-     * notify medical staff, log the alert, or perform other actions. The method
-     * currently assumes that the alert information is fully formed when passed as
-     * an argument.
+     * notify medical staff, log the alert, or perform other actions.
      *
      * @param alert the alert object containing details about the alert condition
      */
