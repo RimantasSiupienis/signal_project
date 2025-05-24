@@ -1,48 +1,75 @@
 package com.alerts;
 
+import com.alerts.strategy.*;
 import com.data_management.DataStorage;
 import com.data_management.Patient;
+import com.alerts.decorator.*;
 
-/**
- * The {@code AlertGenerator} class is responsible for monitoring patient data
- * and generating alerts when certain predefined conditions are met. This class
- * relies on a {@link DataStorage} instance to access patient data and evaluate
- * it against specific health criteria.
- */
+import java.util.ArrayList;
+import java.util.List;
+
 public class AlertGenerator {
 
-    private DataStorage dataStorage;
+    private final DataStorage dataStorage;
+    private final List<Alert> triggeredAlerts;
+    private final List<AlertStrategy> strategies;
 
-    /**
-     * Constructs an {@code AlertGenerator} with a specified {@code DataStorage}.
-     * The {@code DataStorage} is used to retrieve patient data that this class
-     * will monitor and evaluate.
-     *
-     * @param dataStorage the data storage system that provides access to patient
-     *                    data
-     */
     public AlertGenerator(DataStorage dataStorage) {
         this.dataStorage = dataStorage;
+        this.triggeredAlerts = new ArrayList<>();
+
+        this.strategies = List.of(
+            new BloodPressureStrategy(),
+            new OxygenSaturationStrategy(),
+            new ECGStrategy()
+        );
     }
 
-    /**
-     * Evaluates the specified patient's data to determine if any alert conditions
-     * are met. If a condition is met, an alert is triggered via the
-     * {@link #triggerAlert} method.
-     *
-     * @param patient the patient data to evaluate for alert conditions
-     */
+    public void evaluateAll() {
+        for (Patient patient : dataStorage.getAllPatients()) {
+            evaluateData(patient);
+        }
+    }
+
     public void evaluateData(Patient patient) {
-        // Implementation goes here
+        boolean lowBP = false;
+        boolean lowOxygen = false;
+
+        for (AlertStrategy strategy : strategies) {
+            List<Alert> alerts = strategy.checkAlert(patient);
+            for (Alert alert : alerts) {
+                if (alert.getCondition().toLowerCase().contains("systolic") && alert.getCondition().contains("85")) {
+                    lowBP = true;
+                }
+                if (alert.getCondition().toLowerCase().contains("oxygen") && alert.getCondition().contains("88")) {
+                    lowOxygen = true;
+                }
+
+                triggerAlert(alert);
+            }
+        }
+
+        if (lowBP && lowOxygen) {
+            Alert hypoxemiaAlert = new Alert(String.valueOf(patient.getPatientId()), "Hypotensive Hypoxemia", System.currentTimeMillis());
+            triggerAlert(hypoxemiaAlert);
+        }
     }
 
-    /**
-     * Triggers an alert for the monitoring system. This method can be extended to
-     * notify medical staff, log the alert, or perform other actions.
-     *
-     * @param alert the alert object containing details about the alert condition
-     */
     private void triggerAlert(Alert alert) {
-        // Implementation might involve logging the alert or notifying staff
+        AlertComponent decorated = new BasicAlert(alert);
+        decorated = new PriorityAlertDecorator(decorated);
+        decorated = new RepeatedAlertDecorator(decorated, 1); // Dummy repeat count
+
+        triggeredAlerts.add(new Alert(
+                decorated.getPatientId(),
+                decorated.getCondition(),
+                decorated.getTimestamp()
+        ));
+
+        System.out.println("ALERT: " + decorated.getCondition() + " (Patient ID: " + decorated.getPatientId() + ")");
+    }
+
+    public List<Alert> getTriggeredAlerts() {
+        return triggeredAlerts;
     }
 }
