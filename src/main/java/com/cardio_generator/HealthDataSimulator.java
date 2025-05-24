@@ -29,6 +29,16 @@ import java.util.ArrayList;
  */
 public class HealthDataSimulator {
 
+    private static HealthDataSimulator instance;
+    private HealthDataSimulator() {}
+
+    public static synchronized HealthDataSimulator getInstance() {
+        if (instance == null) {
+            instance = new HealthDataSimulator();
+        }
+        return instance;
+    }
+
     private static int patientCount = 50; // Default number of patients
     private static ScheduledExecutorService scheduler;
     private static OutputStrategy outputStrategy = new ConsoleOutputStrategy(); // Default output strategy
@@ -40,14 +50,10 @@ public class HealthDataSimulator {
      * @param args command line arguments for configuration
      * @throws IOException if output directory setup fails
      */
-    public static void main(String[] args) throws IOException {
-        parseArguments(args);
-        scheduler = Executors.newScheduledThreadPool(patientCount * 4);
-        List<Integer> patientIds = initializePatientIds(patientCount);
-        Collections.shuffle(patientIds);
-        scheduleTasksForPatients(patientIds);
+    public static void main(String[] args) {
+        getInstance().run(args);
     }
-
+    
     /**
      * Parses arguments to configure patient count and output type.
      * 
@@ -173,4 +179,18 @@ public class HealthDataSimulator {
     private static void scheduleTask(Runnable task, long period, TimeUnit timeUnit) {
         scheduler.scheduleAtFixedRate(task, random.nextInt(5), period, timeUnit);
     }
+
+    public void run(String[] args) {
+        try {
+            parseArguments(args);
+            scheduler = Executors.newScheduledThreadPool(patientCount * 4);
+            List<Integer> patientIds = initializePatientIds(patientCount);
+            Collections.shuffle(patientIds);
+            scheduleTasksForPatients(patientIds);
+        } catch (IOException e) {
+            System.err.println("Failed to start simulator: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
 }
