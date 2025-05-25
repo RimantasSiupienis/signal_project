@@ -12,33 +12,27 @@ public class SimpleWebSocketClient extends WebSocketClient implements DataReader
 
     public SimpleWebSocketClient(URI serverUri,int clientID) {
         super(serverUri);
-        
+
         this.clientID = clientID;
     }
 
-    
+
 
     @Override
-    public void readData(DataStorage dataStorage, String message){
-         
-        
+    public void readData(DataStorage dataStorage, String message) {
         try {
-            
-        
-        String[] segmentedMessage = message.split(",");
-        
-        int patientId = Integer.parseInt(segmentedMessage[0]);
-        long timestamp = Long.parseLong(segmentedMessage[1]);
-        String label = segmentedMessage[2];
-        String data = segmentedMessage[3];
+            String[] segmentedMessage = message.split(",");
+            int patientId = Integer.parseInt(segmentedMessage[0]);
+            long timestamp = Long.parseLong(segmentedMessage[1]);
+            String label = segmentedMessage[2];
+            double measurementValue = Double.parseDouble(segmentedMessage[3]);
 
-        dataStorage.addPatientData(patientId, timestamp, portName, timestamp);
-        } catch (Exception e) { 
-            
+            dataStorage.addPatientData(patientId, measurementValue, portName, timestamp);
+        } catch (Exception e) {
             System.out.println("Error: Message data corrupted: " + message);
         }
-        
     }
+
 
    @Override
     public void onOpen(ServerHandshake handshakedata) {
@@ -48,13 +42,13 @@ public class SimpleWebSocketClient extends WebSocketClient implements DataReader
 
    @Override
     public void onMessage(String message){
-        
-        DataStorage dataStorage = DataStorage.getInstance();
-        
-        readData(dataStorage, message);
-       
 
-       
+        DataStorage dataStorage = DataStorage.getInstance();
+
+        readData(dataStorage, message);
+
+
+
     }
 
     @Override
@@ -67,9 +61,9 @@ public class SimpleWebSocketClient extends WebSocketClient implements DataReader
 
     @Override
     public void onError(Exception ex) {
-        
+
         System.out.println("Encountered error: " + ex);
         ex.printStackTrace();
     }
-    
+
 }
