@@ -12,8 +12,9 @@ public class FileDataReader implements DataReader {
         this.filePath = filePath;
     }
 
+    //TODO wth is going on
     @Override
-    public void readData(DataStorage dataStorage) throws IOException {
+    public void readData(DataStorage dataStorage, String s){
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
 
@@ -29,6 +30,9 @@ public class FileDataReader implements DataReader {
 
                 dataStorage.addPatientData(patientId, measurementValue, recordType, timestamp);
             }
+        }catch(IOException e)
+        {
+            e.printStackTrace();
         }
     }
 }

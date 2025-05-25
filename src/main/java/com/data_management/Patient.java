@@ -63,9 +63,17 @@ public class Patient {
         }
         return filteredRecords;
     }
-
-    public int getPatientId() {
-        return this.patientId;
-    }    
     
+
+    /**
+     * Fetches ID number of a patient object
+     * 
+     * 
+     * @return ID of the patient
+     * 
+     */
+    public int getPatientId()
+    {
+        return patientId;
+    }
 }

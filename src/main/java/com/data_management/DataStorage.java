@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.alerts.AlertGenerator;
 
 /**
@@ -12,7 +13,8 @@ import com.alerts.AlertGenerator;
  */
 public class DataStorage {
     private static DataStorage instance; // Singleton instance
-    private Map<Integer, Patient> patientMap;
+    private static Map<Integer, Patient> patientMap;
+    private static final int DUPLICATE_CHECK_TIME_RANGE = 500;
 
     private DataStorage() {
         this.patientMap = new HashMap<>();
@@ -25,14 +27,30 @@ public class DataStorage {
         return instance;
     }
 
-    public void addPatientData(int patientId, double measurementValue, String recordType, long timestamp) {
+    public static synchronized void addPatientData(int patientId, double measurementValue, String recordType, long timestamp) {
         Patient patient = patientMap.get(patientId);
         if (patient == null) {
             patient = new Patient(patientId);
             patientMap.put(patientId, patient);
-        }
+        }else if (!verifyRecord(patient, measurementValue,recordType,timestamp))
+
         patient.addRecord(measurementValue, recordType, timestamp);
     }
+
+    public static synchronized boolean verifyRecord(Patient patient, double measurementValue, String recordType, long timestamp)
+    {
+        List<PatientRecord> records = patient.getRecords(timestamp - DUPLICATE_CHECK_TIME_RANGE /2
+        , timestamp + DUPLICATE_CHECK_TIME_RANGE / 2);
+
+        for(PatientRecord p : records)
+        {
+            if(p.getRecordType().equals(recordType) && p.getMeasurementValue() == measurementValue) return false;
+
+        }
+        return true;
+
+    }
+   
 
     public List<PatientRecord> getRecords(int patientId, long startTime, long endTime) {
         Patient patient = patientMap.get(patientId);
