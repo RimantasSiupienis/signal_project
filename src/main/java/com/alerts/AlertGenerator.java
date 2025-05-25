@@ -8,12 +8,21 @@ import com.alerts.decorator.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * AlertGenerator is responsible for evaluating patient data and generating alerts based on strategies we made
+ * and triggers appropriate alerts.
+ */
 public class AlertGenerator {
 
     private final DataStorage dataStorage;
     private final List<Alert> triggeredAlerts;
     private final List<AlertStrategy> strategies;
 
+    /**
+     * Constructs an AlertGenerator with the specified DataStorage.
+     *
+     * @param dataStorage the DataStorage instance to use for patient data
+     */
     public AlertGenerator(DataStorage dataStorage) {
         this.dataStorage = dataStorage;
         this.triggeredAlerts = new ArrayList<>();
@@ -31,6 +40,11 @@ public class AlertGenerator {
         }
     }
 
+    /**
+     * Evaluates the data of a specific patient and generates alerts based on the defined strategies.
+     *
+     * @param patient the patient whose data is to be evaluated
+     */
     public void evaluateData(Patient patient) {
         boolean lowBP = false;
         boolean lowOxygen = false;
@@ -55,6 +69,12 @@ public class AlertGenerator {
         }
     }
 
+    /**
+     * Triggers an alert based on the provided Alert object.
+     * It decorates the alert with additional information and adds it to the list of triggered alerts.
+     *
+     * @param alert the Alert object to be triggered
+     */
     private void triggerAlert(Alert alert) {
         AlertComponent decorated = new BasicAlert(alert);
         decorated = new PriorityAlertDecorator(decorated);

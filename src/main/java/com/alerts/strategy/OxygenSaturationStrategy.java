@@ -7,8 +7,21 @@ import com.alerts.Alert;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Strategy for checking oxygen saturation alerts in the healthcare system.
+ * This class implements the AlertStrategy interface and checks for low blood oxygen levels
+ * and big drops in oxygen saturation.
+ */
 public class OxygenSaturationStrategy implements AlertStrategy {
 
+    /**
+     * Checks for oxygen saturation alerts for the given patient.
+     * It analyzes the patient's records to find low blood oxygen levels
+     * and significant drops in oxygen saturation.
+     *
+     * @param patient the patient whose records are to be checked
+     * @return a list of alerts generated based on the patient's oxygen records
+     */
     @Override
     public List<Alert> checkAlert(Patient patient) {
         List<Alert> alerts = new ArrayList<>();

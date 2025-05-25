@@ -9,11 +9,25 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+
+/**
+ * Strategy for checking ECG alerts in th system.
+ * This class implements the AlertStrategy interface and checks for spikes in ECG readings
+ * based on a moving average over a defined window size.
+ */
 public class ECGStrategy implements AlertStrategy {
 
     private static final int WINDOW_SIZE = 5;
     private static final double SPIKE_THRESHOLD_MULTIPLIER = 1.5;
 
+    /**
+     * Checks for ECG alerts for the given patient.
+     * It analyzes the patient's records to find spikes in ECG readings
+     * based on a moving average over a defined window size.
+     *
+     * @param patient the patient whose records are to be checked
+     * @return a list of alerts generated based on the patients ECG records
+     */
     @Override
     public List<Alert> checkAlert(Patient patient) {
         List<Alert> alerts = new ArrayList<>();

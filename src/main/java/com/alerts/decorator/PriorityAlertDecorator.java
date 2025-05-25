@@ -6,6 +6,11 @@ public class PriorityAlertDecorator extends AlertDecorator {
         super(wrapped);
     }
 
+    /**
+     * Returns the patient ID with a priority prefix.
+     *
+     * @return the patient ID with the afformentioned prefix
+     */
     @Override
     public String getCondition() {
         return "[PRIORITY] " + super.getCondition();

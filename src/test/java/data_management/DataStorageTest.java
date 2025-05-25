@@ -8,6 +8,10 @@ import com.data_management.PatientRecord;
 
 import java.util.List;
 
+/**
+ * Unit tests for the DataStorage class.
+ * Tests adding and retrieving patient records.
+ */
 class DataStorageTest {
 
     @Test

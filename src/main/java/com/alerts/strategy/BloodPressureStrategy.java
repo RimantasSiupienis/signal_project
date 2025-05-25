@@ -7,8 +7,22 @@ import com.alerts.Alert;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Strategy for checking blood pressure alerts in the healthcare system.
+ * This class implements the AlertStrategy interface and checks for critical
+ * blood pressure readings, as well as trends in the readings.
+ */
 public class BloodPressureStrategy implements AlertStrategy {
 
+    /**
+     * Checks for blood pressure alerts for the given patient.
+     * It analyzes the patient's records to find critical s and d readings
+     * and detects trends in the blood pressure values.
+     *
+     * @param patient the patient whose records are to be checked
+     * @return a list of alerts generated based on the patient's blood pressure records
+     */
     @Override
     public List<Alert> checkAlert(Patient patient) {
         List<Alert> alerts = new ArrayList<>();
@@ -35,7 +49,7 @@ public class BloodPressureStrategy implements AlertStrategy {
             }
         }
 
-        // Optional: detect increasing or decreasing trend
+        // Detect increasing or decreasing trend
         if (detectTrend(systolics, 10)) {
             alerts.add(new Alert(String.valueOf(patient.getPatientId()), "Increasing systolic BP trend", System.currentTimeMillis()));
         }
@@ -46,6 +60,15 @@ public class BloodPressureStrategy implements AlertStrategy {
         return alerts;
     }
 
+    /**
+     * Detects a trend in the given list of values.
+     * A trend is considered increasing if the last three values show a consistent increase
+     * greater than the specified direction threshold, or decreasing if its the opposite.
+     *
+     * @param values the list of values to analyze
+     * @param directionThreshold the threshold for detecting increasing or decreasing trend
+     * @return true if a trend is detected
+     */
     private boolean detectTrend(List<Double> values, int directionThreshold) {
         if (values.size() < 3) return false;
         double d1 = values.get(values.size() - 3);

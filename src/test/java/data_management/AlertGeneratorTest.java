@@ -10,6 +10,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for the AlertGenerator class.
+ * Tests various alert conditions based on patient data.
+ */
 public class AlertGeneratorTest {
 
     @BeforeEach
@@ -55,7 +59,7 @@ public class AlertGeneratorTest {
         storage.addPatientData(1, 1.0, "ecg", 3002);
         storage.addPatientData(1, 0.95, "ecg", 3003);
         storage.addPatientData(1, 0.9, "ecg", 3004);
-        storage.addPatientData(1, 1.6, "ecg", 3005); // spike
+        storage.addPatientData(1, 1.6, "ecg", 3005); // this will be a spike
 
         AlertGenerator generator = new AlertGenerator(storage);
         generator.evaluateAll();
